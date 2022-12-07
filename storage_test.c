@@ -19,14 +19,29 @@
 #include <unistd.h>
 
 //------------------------------------------------------------------------------
+#include "storage_test.h"
+
+//------------------------------------------------------------------------------
 #define	msg(fmt, args...)	fprintf(stdout,"[STORAGE(%s)] " fmt, __func__, ##args)
 
 typedef enum {false, true}  bool;
 
 //------------------------------------------------------------------------------
-// Storage Read (16 Mbytes, ??? block count)
+// Default sotrage read command (16 Mbytes, block count depends on the device type)
+//------------------------------------------------------------------------------
 #define READ_TEST_CMD		"dd of=/dev/null bs=16M iflag=dsync,direct oflag=dsync,nocache"
 #define	REDIRECTION_CMD		"2<&1"
+
+//------------------------------------------------------------------------------
+// ODROID-M1 Device node & speed check filename
+//------------------------------------------------------------------------------
+#define	DEV_NODE_EMMC	"mmcblk0"
+#define	DEV_NODE_SDMMC	"mmcblk1"
+#define	DEV_NODE_NVME	"nvme0n1"
+#define	DEV_NODE_SATA	"sda"
+
+#define	SATA_SPEED	"/sys/devices/platform/fc800000.sata/ata1/link1/ata_link/link1/sata_spd"
+#define	NVME_SPEED	"/sys/devices/platform/3c0800000.pcie/pci0002:20/0002:20:00.0/0002:21:00.0/current_link_speed"
 
 //------------------------------------------------------------------------------
 int storage_read_test (char *dev_node, int count)
@@ -64,17 +79,6 @@ int storage_read_test (char *dev_node, int count)
 	}
 	return	0;
 }
-
-//------------------------------------------------------------------------------
-// ODROID-M1
-//------------------------------------------------------------------------------
-#define	DEV_NODE_EMMC	"mmcblk0"
-#define	DEV_NODE_SDMMC	"mmcblk1"
-#define	DEV_NODE_NVME	"nvme0n1"
-#define	DEV_NODE_SATA	"sda"
-
-#define	SATA_SPEED	"/sys/devices/platform/fc800000.sata/ata1/link1/ata_link/link1/sata_spd"
-#define	NVME_SPEED	"/sys/devices/platform/3c0800000.pcie/pci0002:20/0002:20:00.0/0002:21:00.0/current_link_speed"
 
 //------------------------------------------------------------------------------
 int storage_test (const char *dev_name, char *resp_str)
@@ -119,6 +123,8 @@ int storage_test (const char *dev_name, char *resp_str)
 	return	speed;
 }
 
+//------------------------------------------------------------------------------
+#if defined( __DEBUG_APP__)
 //------------------------------------------------------------------------------
 static void print_usage(const char *prog)
 {
@@ -166,4 +172,5 @@ int main(int argc, char **argv)
 }
 
 //------------------------------------------------------------------------------
+#endif	// #if defined( __DEBUG_APP__)
 //------------------------------------------------------------------------------
