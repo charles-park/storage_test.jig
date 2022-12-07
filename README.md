@@ -1,2 +1,2 @@
-# storage_test.jog
-for Storage test.(emmc, sd, sata, nvme...)
+# storage_test.jig
+Storage device test application for odroid-jig.(emmc, sd, sata, nvme...)
